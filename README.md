@@ -1,0 +1,2 @@
+- ## Descarga el repositorio `git clone`
+- ## Ejecuta el run.cmd si estas en Windows o ejecuta el comando `npm start`
