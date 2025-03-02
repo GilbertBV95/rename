@@ -1,4 +1,4 @@
-- ## Descarga el repositorio `git clone`
+- ## Descarga el repositorio `git clone https://github.com/GilbertBV95/rename.git`
 - ## Ejecutar:
     - ### run.cmd si estas en Windows
     - ### comando `npm start` en la consola (Tener node instalado)
