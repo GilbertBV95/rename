@@ -1,17 +1,24 @@
 {
   "name": "rename",
   "version": "1.0.0",
-  "description": "Delete specials characters for the filesname in the given path",
-  "main": "app.js",
+  "description": "Delete specials characters for the file's name in the given path",
+  "main": "src/app.js",
   "type": "module",
+  "bin": "cli/init.js",
   "scripts": {
-    "start": "node app.js",
+    "start": "node src/app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
-    ""
+    "llm",
+    "rename"
   ],
-  "author": "Gilberto Berroa",
+  "author": "GilbertoBV95",
   "license": "ISC",
-  "packageManager": "pnpm@10.4.1"
+  "packageManager": "pnpm@10.4.1",
+  "dependencies": {
+    "@langchain/core": "^0.3.66",
+    "@langchain/google-genai": "^0.2.15",
+    "dotenv": "^16.5.0"
+  }
 }
