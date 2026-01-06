@@ -4,9 +4,11 @@ import { printError } from './utils/print.js';
 import { scanDirAndRename } from './utils/filename_sanitizer.js';
 import { getArgs } from './utils/get_args.js';
 import { getFileRenameSuggestionFromIA } from './services/gemini_api.js';
+import { matchRegExp } from './utils/validate_regex.js';
 
 configDotenv();
 
+//TODO TERMINAR LA CONEXION CON EL LLM Y VER LO DE REORGANIZAR FICHEROS POR AFINIDAD
 export const main = async () => {
 	const args = argv.slice(2);
 	const { path, help, ext, renameDir, model, regex } = getArgs(args);
@@ -16,14 +18,12 @@ export const main = async () => {
 		exit();
 	}
 
-	console.log(ext)
-
 	if (!path) {
 		printError('Introduzca un directorio');
 		exit(1);
 	}
 
-	const data = await scanDirAndRename(path);
+	const data = await scanDirAndRename(path, matchRegExp(regex), ext);
 
 	// await getFileRenameSuggestionFromIA(model, renameSubPrompt(data));
 
@@ -41,7 +41,7 @@ export const main = async () => {
 const showHelp = () => {
 	console.log(`
 	Uso:	rename --path D:\\Pelis [opciones]
-		rename --path D:\\Series --regex /\\s/g
+		rename --path D:\\Series --regex '/\s/g'
 
 	Opciones:
 	-rndir			Para renombrar las carpetas
@@ -50,7 +50,7 @@ const showHelp = () => {
 	-m, --model		Modelo a utilizar (Por defecto: gemini-2.5-flash)
 	--path			Directorio inicial para renombrar contenido
 	--regex			Expresion regular con los caracteres a eliminar 
-				-ej: /\\s/g
+				-ej: '/\s/g'
 				-Elimina por defecto ., -,_ ,( ,) ,[ ,]
 
 	Ejemplos:
