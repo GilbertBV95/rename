@@ -19,7 +19,6 @@ export const matchRegExp = (regex = undefined) => {
 	} else if (regex.startsWith('/') && lastIndex == 0) {
 		printError('Expresión regular no válida');
 		exit(1);
-
 	}
 	return new RegExp(regex);
 }
