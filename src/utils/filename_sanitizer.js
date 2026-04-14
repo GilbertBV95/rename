@@ -46,7 +46,7 @@ export async function scanDirAndRename(path, regex = /[.\-_()\[\]+]/g, exts = []
 							let newElementName = `${elementBaseName.replace(regex, ' ').trim()}${ext}`;
 							//quitando espacios en blanco repetidos
 							newElementName = newElementName.replace(/\s+/g, ' ');
-							const newElementPath = `${dirname(elementPath)}\\${newElementName}`;
+							const newElementPath =  join(dirname(elementPath), newElementName);
 							const promisifiedRename = promisify(rename);
 							await promisifiedRename(elementPath, newElementPath);
 							printWithDiferentColor(`Renombrado ${element}`, `${newElementName}`, 'red', 'green');
