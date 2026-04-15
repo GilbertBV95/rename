@@ -46,13 +46,11 @@ export async function scanDirAndRename(path, regex = /[.\-_()\[\]+]/g, exts = []
 							let newElementName = `${elementBaseName.replace(regex, ' ').trim()}${ext}`;
 							//quitando espacios en blanco repetidos
 							newElementName = newElementName.replace(/\s+/g, ' ');
-							const newElementPath =  join(dirname(elementPath), newElementName);
-							const promisifiedRename = promisify(rename);
-							await promisifiedRename(elementPath, newElementPath);
-							printWithDiferentColor(`Renombrado ${element}`, `${newElementName}`, 'red', 'green');
+							const newElementPath = await renameElement(element, newElementName, currentPath)
 							renamedFiles++;
 
-							fileTree[currentPath].push(newElementPath);
+							if (newElementPath)
+								fileTree[currentPath].push(newElementPath);
 						} else fileTree[currentPath].push(elementPath);
 					}
 				} else if (stats.isDirectory) {
@@ -70,4 +68,17 @@ export async function scanDirAndRename(path, regex = /[.\-_()\[\]+]/g, exts = []
 		else printError(error.message)
 		exit(1);
 	}
+}
+
+export const renameElement = async (elementName, newElementName, path) => {
+	try {
+		const elementPath = join(path, elementName);
+		const newElementPath = join(dirname(elementPath), newElementName);
+		const promisifiedRename = promisify(rename);
+		const err = await promisifiedRename(elementPath, newElementPath);
+		printWithDiferentColor(`Renombrado ${elementName}`, `${newElementName}`, 'red', 'green');
+	} catch (error) {
+		printError(`Error al renombrar ${elementName}`);
+	}
+	return newElementPath;
 }

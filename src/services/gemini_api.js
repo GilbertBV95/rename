@@ -1,15 +1,25 @@
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { HumanMessage } from "@langchain/core/messages";
+import { exit } from 'node:process';
 
-export const getFileRenameSuggestionFromIA = async (model, prompt) => {
+export const getFileRenameSuggestionFromIA = async (model, prompt, spinner) => {
 	try {
 		const ia = new ChatGoogleGenerativeAI({
 			model,
-			apiKey: process.env.GOOGLE_API_KEY
+			apiKey: process.env.GOOGLE_API_KEY,
+			json: true
 		});
-		const response = await ia.invoke([new HumanMessage({ content: `hola.mp4, h_l4.srt` })]);
-		console.log(response.content)
+		const response = await ia.invoke([
+			new HumanMessage(
+				{
+					type: 'text',
+					content: prompt
+				})
+		]);
+
+		return JSON.parse(response.content);
 	} catch (error) {
-		console.log(error, 'sss');
+		spinner.error(error.statusText);
+		exit(1);
 	}
 }

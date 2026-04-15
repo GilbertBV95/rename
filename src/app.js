@@ -1,10 +1,11 @@
 import { configDotenv } from 'dotenv';
 import { exit, argv } from 'node:process';
-import { printError } from './utils/print.js';
-import { scanDirAndRename } from './utils/filename_sanitizer.js';
+import { printEndLine, printError } from './utils/print.js';
+import { renameElement, scanDirAndRename } from './utils/filename_sanitizer.js';
 import { getArgs } from './utils/get_args.js';
 import { getFileRenameSuggestionFromIA } from './services/gemini_api.js';
 import { matchRegExp } from './utils/validate_regex.js';
+import { spinner } from './utils/spinner.js';
 
 configDotenv();
 
@@ -23,19 +24,25 @@ export const main = async () => {
 		exit(1);
 	}
 
+	spinner.start();
 	const data = await scanDirAndRename(path, matchRegExp(regex), ext);
 
-	// await getFileRenameSuggestionFromIA(model, renameSubPrompt(data));
+	if (model) {
+		spinner.text = `Enviando datos a la ia`;
+		const modelResponse = await getFileRenameSuggestionFromIA(model, renameSubPrompt(data), spinner);
 
-	// printEndLine('Enter the files path :')
-	// openStdin().addListener('data', (data) => {
-	// 	const str = data.toString().trim();
-	// 	const path = dirname(str + '\\\r\n');
-	// 	const a = scanDirAndRename(path);
-	// 	console.log(a, 'aa');
-	// 	exit();
-	// })
+		spinner.text = 'Renombrando sugerencias de la ia';
+		if (modelResponse.length) printEndLine('Sugerencias de la ia ia', 'yellow', true);
+		else spinner.stop('\n Sin sugerencias de la ia');
 
+		for (const obj of modelResponse) {
+			const elementName = `${obj.old_name}.${obj.ext}`;
+			const newElementName = `${obj.new_name}.${obj.ext}`;
+			await renameElement(elementName, newElementName, obj.path);
+		}
+	}
+
+	spinner.stop();
 };
 
 const showHelp = () => {
@@ -44,7 +51,6 @@ const showHelp = () => {
 		rename --path D:\\Series --regex '/\s/g'
 
 	Opciones:
-	-rndir			Para renombrar las carpetas
 	--ext			Extension de los ficheros a renombrar (Todas por defecto)
 	-h, --help		Muestra esta pantalla de ayuda
 	-m, --model		Modelo a utilizar (Por defecto: gemini-2.5-flash)
@@ -75,7 +81,10 @@ Debes hacer los siguinte:
 
 Este es el listado de los ficheros
 ---
-${data}
+${JSON.stringify(data)}
 ---
-Responde SOLAMENTE con la solucion, no incluyas explicaciones adicionales y dame solo la lista de los renombramientos en formato JSON con la siguiente estructura ej: [{old_name: Willy, new_name: Liberen a Willy, ext: srt, path: D:\\peliculas\\}].
+Responde SOLAMENTE con la solucion, no incluyas explicaciones adicionales, dame solo la lista de los 
+renombramientos en formato JSON con la siguiente estructura ej: [{old_name: Willy, new_name: Liberen a 
+Willy, ext: srt, path: D:\\peliculas\\}] y siempre se tiene que cumplir ademas que old_name != new_name.
+Si no existe ninguna sugerencia devuelve un arreglo vacio.
 `;
