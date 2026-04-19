@@ -12,7 +12,10 @@ export const getArgs = (args) => {
 	const renameDir = renameDirIndex !== -1 ? true : false;
 
 	const modelIndex = args.findIndex(arg => arg === '---model' || arg === '-m');
-	const model = modelIndex !== -1 && args[modelIndex + 1] && !args[modelIndex + 1].includes('--') ? args[modelIndex + 1] : 'gemini-2.5-flash';
+	
+	let model;
+	if (modelIndex != -1)
+		model = args[modelIndex + 1] && !args[modelIndex + 1].includes('--') ? args[modelIndex + 1] : 'gemini-2.5-flash';
 
 	const regexIndex = args.findIndex(arg => arg === '--regex');
 	const regex = regexIndex !== -1 && args[regexIndex + 1] ? args[regexIndex + 1] : undefined;
