@@ -24,6 +24,15 @@ npm install -g @gilbertbv95/rename
     API Key: Google AI (Gemini)
     Variable de entorno: GOOGLE_API_KEY debe estar configurada
 
+    # Linux / macOS
+    export GOOGLE_API_KEY="tu-api-key-aqui"
+
+    # Windows (CMD)
+    set GOOGLE_API_KEY=tu-api-key-aqui
+
+    # Windows (PowerShell)
+    $env:GOOGLE_API_KEY="tu-api-key-aqui"
+
 ## 🚀 Uso del comando rename
 ``` bash
 rename --path <directorio> [opciones]
