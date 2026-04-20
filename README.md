@@ -33,6 +33,8 @@ npm install -g @gilbertbv95/rename
     # Windows (PowerShell)
     $env:GOOGLE_API_KEY="tu-api-key-aqui"
 
+    LA IA POR EL MOMENTO SOLO SINCRONIZA LOS NOMBRES DE LOS VIDEOS CON SUS SUBTITULOS
+
 ## 🚀 Uso del comando rename
 ``` bash
 rename --path <directorio> [opciones]
