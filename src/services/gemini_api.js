@@ -19,7 +19,7 @@ export const getFileRenameSuggestionFromIA = async (model, prompt, spinner) => {
 
 		return JSON.parse(response.content);
 	} catch (error) {
-		spinner.error(error.statusText);
+		spinner.error(error.statusText || error.message.split(' or ')[0]);
 		exit(1);
 	}
 }
