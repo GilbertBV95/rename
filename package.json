@@ -1,6 +1,6 @@
 {
 	"name": "@gilbertbv95/rename",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "Renombra ficheros basados en una RexEx y sincroniza los nombres de un video y su subtitulo",
 	"main": "src/app.js",
 	"type": "module",

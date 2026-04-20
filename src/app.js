@@ -40,9 +40,7 @@ export const main = async () => {
 			const newElementName = `${obj.new_name}.${obj.ext}`;
 			await renameElement(elementName, newElementName, obj.path);
 		}
-	}
-
-	spinner.stop();
+	} else spinner.stop();
 };
 
 const showHelp = () => {
