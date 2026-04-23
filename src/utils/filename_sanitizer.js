@@ -63,6 +63,7 @@ export async function scanDirAndRename(path, regex = /[.\-_()\[\]+]/g, exts = []
 
 		return fileTree;
 	} catch (error) {
+		console.log(error)
 		if (error.message.includes('ENOENT'))
 			printError('Directorio o fichero no encontrado');
 		else printError(error.message)
@@ -77,8 +78,9 @@ export const renameElement = async (elementName, newElementName, path) => {
 		const promisifiedRename = promisify(rename);
 		const err = await promisifiedRename(elementPath, newElementPath);
 		printWithDiferentColor(`Renombrado ${elementName}`, `${newElementName}`, 'red', 'green');
+		return newElementPath;
 	} catch (error) {
 		printError(`Error al renombrar ${elementName}`);
+		return;
 	}
-	return newElementPath;
 }
