@@ -13,6 +13,7 @@ configDotenv();
 export const main = async () => {
 	const args = argv.slice(2);
 	const { path, help, ext, renameDir, model, regex } = getArgs(args);
+	let sugeridos = 0;
 
 	if (help) {
 		showHelp();
@@ -29,18 +30,22 @@ export const main = async () => {
 
 	if (model) {
 		spinner.text = `Enviando datos a la ia`;
-		const modelResponse = await getFileRenameSuggestionFromIA(model, renameSubPrompt(data), spinner);
+		const modelResponse = await getFileRenameSuggestionFromIA(model, renameSubPrompt(data.fileTree), spinner);
 
-		spinner.text = 'Renombrando sugerencias de la ia';
-		if (modelResponse.length) printEndLine('Sugerencias de la ia ia', 'yellow', true);
-		else spinner.stop('\n Sin sugerencias de la ia');
-
-		for (const obj of modelResponse) {
-			const elementName = `${obj.old_name}.${obj.ext}`;
-			const newElementName = `${obj.new_name}.${obj.ext}`;
-			await renameElement(elementName, newElementName, obj.path);
+		sugeridos = modelResponse.length;
+		if (sugeridos) {
+			printEndLine('\n Sugerencias de la ia', 'yellow', false);
+			spinner.text = 'Renombrando sugerencias de la ia';
+			for (const obj of modelResponse) {
+				const elementName = `${obj.old_name}.${obj.ext}`;
+				const newElementName = `${obj.new_name}.${obj.ext}`;
+				await renameElement(elementName, newElementName, obj.path);
+			}
 		}
-	} else spinner.stop();
+
+	}
+
+	spinner.success(`Total Ficheros: ${data.encontrados}, Renombrados: ${data.renomabrados}, Sugeridos por la ia: ${sugeridos}`);
 };
 
 const showHelp = () => {
@@ -75,7 +80,7 @@ Ghost Hunters.avi
 
 Debes hacer los siguinte:
 1.Debes renombrar cada subtitulo de manera que coincida con el video
-2.Empareja por orden si no hay coincidencia directa
+2.Empareja solo cuando exista una coincidencia clara entre los nombres
 
 Este es el listado de los ficheros
 ---

@@ -6,19 +6,19 @@ import { promisify } from 'node:util';
 
 export async function scanDirAndRename(path, regex = /[.\-_()\[\]+]/g, exts = []) {
 	try {
-		const cola = [path], fileTree = {};
+		const cola = [{currentPath: path, nivel: 1}], fileTree = {};
 		let totalFiles = 0, renamedFiles = 0;
 
 		while (cola.length > 0) {
-			const currentPath = cola.shift();
+			const {currentPath, nivel} = cola.shift();
 
 			const promisifiedReadDir = promisify(readdir)
 			const dirContent = await promisifiedReadDir(currentPath);
 
 			if (currentPath === path)
-				printEndLine(`\n Directorio Inicial ${currentPath}`, 'yellow')
+				printEndLine(`Directorio Inicial ${currentPath}`, 'yellow', false)
 			else
-				printEndLine(` Directorio Actual ${currentPath}`, 'blue', false);
+				printEndLine(`${createAnid(nivel)}Directorio Actual ${currentPath}`, 'blue', false);
 
 			for (let i = 0; i < dirContent.length; i++) {
 				const element = dirContent[i];
@@ -46,7 +46,7 @@ export async function scanDirAndRename(path, regex = /[.\-_()\[\]+]/g, exts = []
 							let newElementName = `${elementBaseName.replace(regex, ' ').trim()}${ext}`;
 							//quitando espacios en blanco repetidos
 							newElementName = newElementName.replace(/\s+/g, ' ');
-							const newElementPath = await renameElement(element, newElementName, currentPath)
+							const newElementPath = await renameElement(element, newElementName, currentPath, nivel + 1)
 							renamedFiles++;
 
 							if (newElementPath)
@@ -54,14 +54,12 @@ export async function scanDirAndRename(path, regex = /[.\-_()\[\]+]/g, exts = []
 						} else fileTree[currentPath].push(elementPath);
 					}
 				} else if (stats.isDirectory) {
-					cola.push(elementPath);
+					cola.push({currentPath: elementPath, nivel: nivel + 1});
 				}
 			}
 		}
 
-		console.log(`\n Ficheros Encontrados: ${totalFiles}, Ficheros Renombrados ${renamedFiles}`);
-
-		return fileTree;
+		return {fileTree, renomabrados: renamedFiles, encontrados: totalFiles};
 	} catch (error) {
 		console.log(error)
 		if (error.message.includes('ENOENT'))
@@ -71,16 +69,23 @@ export async function scanDirAndRename(path, regex = /[.\-_()\[\]+]/g, exts = []
 	}
 }
 
-export const renameElement = async (elementName, newElementName, path) => {
+// Renombra ,imprime el cambio de nombre y retorna el nuevo camino
+export const renameElement = async (elementName, newElementName, path, nivel = null) => {
 	try {
 		const elementPath = join(path, elementName);
 		const newElementPath = join(dirname(elementPath), newElementName);
 		const promisifiedRename = promisify(rename);
 		const err = await promisifiedRename(elementPath, newElementPath);
-		printWithDiferentColor(`Renombrado ${elementName}`, `${newElementName}`, 'red', 'green');
+		printWithDiferentColor(`${createAnid(nivel)}Renombrado ${elementName}`, `${newElementName}`, 'red', 'green');
 		return newElementPath;
 	} catch (error) {
 		printError(`Error al renombrar ${elementName}`);
 		return;
 	}
+}
+//Crear anidamiento en dependencia del nivel
+const createAnid = (nivel) => {
+	if (!nivel) return '';
+
+	return `${'-'.repeat(nivel)} `;
 }
