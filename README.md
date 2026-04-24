@@ -54,6 +54,10 @@ rename --path "D:\\Series\\Mi Serie" --regex '/\./g'
 # "Mi Serie S01E02 HDTV x264-GROUP.mkv"
 ```
 
+### 📸 Resultados visuales
+- ![picture1](https://github.com/gilbertbv95/rename/pictures/picture1.png)
+- ![picture2](https://github.com/gilbertbv95/rename/pictures/picture2.png)
+
 ## 📞 Soporte
 - 🐛 Reportar bugs: [Issues](https://github.com/gilbertbv95/rename/issues)
 - 📖 Ver código: [GitHub](https://github.com/gilbertbv95/rename)
