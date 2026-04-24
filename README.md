@@ -55,8 +55,8 @@ rename --path "D:\\Series\\Mi Serie" --regex '/\./g'
 ```
 
 ### 📸 Resultados visuales
-- ![picture1](https://github.com/gilbertbv95/rename/pictures/picture1.png)
-- ![picture2](https://github.com/gilbertbv95/rename/pictures/picture2.png)
+- ![picture1]([https://github.com/gilbertbv95/rename/pictures/picture1.png](https://github.com/gilbertbv95/rename/blob/master/pictures/picture1.png))
+- ![picture2]([https://github.com/gilbertbv95/rename/pictures/picture2.png](https://github.com/gilbertbv95/rename/blob/master/pictures/picture2.png))
 
 ## 📞 Soporte
 - 🐛 Reportar bugs: [Issues](https://github.com/gilbertbv95/rename/issues)
